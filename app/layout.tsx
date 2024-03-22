@@ -27,6 +27,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <header>
               <div className="flex items-center justify-between">
                 <ModeToggle />
+                <span>Abdul Alberto-Shaikh Take Home </span>
               </div>
             </header>
             <main>{children}</main>
