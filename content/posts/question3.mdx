@@ -1,0 +1,23 @@
+---
+title: Question 3
+description: Describe how you solved a challenge or technical issue that you faced in a previous role (preferably in a previous support role). How did you determine that your solution was successful?
+date: "2024-03-21"
+---
+
+
+As a support engineer, much of the day-to-day work we are involved in includes solving technical challenges. To best answer this question, I will discuss one of these times that I was proud to have solved the issue while in my most recent position at Bolt.
+
+## Context: 
+Bolt is a checkout application that is installed on our merchants' sites by having them embed a script. We have multiple applications that merchants can onboard with, and each involves including a different script. This includes our checkout script, our SSO script, and product recommendations.
+
+## The problem
+One of our merchants reached out to the support team with a ticket letting us know that when they had Bolt enabled, the site would crash. I found this interesting because I was not seeing this on our other merchants' sites. My immediate thought was that the issue was on the merchant side and they had a memory leak on their site causing the site to stall. I spent some more time looking into this and used the Chrome network tools to block all of the Bolt scripts from loading. Sure enough, the page was no longer crashing. This meant that something in the Bolt scripts was causing the site to crash. From here, I started looking at the performance tab and tracking down what was causing the slowdown. Eventually, I saw that the issue was linked to Bolt, but most interestingly, this was related to our client-side error logging tool Bugsnag. I found that each time an element on the page was clicked, the entire DOM node was recursively parsed and logged in BugSnag. What was most interesting was if you clicked on the side of the page, you were really clicking the root element of the page. This would trigger a BugSnag to ingest the entire page and send a request to log this event as an info log within the service. This round trip would be a total of a 3-second delay on the page. On top of this, the BugSnag client was being instantiated multiple times by each Bolt script. This means that if the merchant was using product recommendations, SSO, and checkout, we would see page stalls from 9-12 seconds. This was unacceptable, and I raised this with our engineering team.
+
+## The solution
+ Solving this issue was tricky because we had to ask hard questions about the value of BugSnag info logging and the current implementation of duplicated logging clients. In the end, our team decided that BugSnag info logging did not provide value to the support or engineering teams. We were also at a point where we were looking to reduce costs of external services, so the answer was clear. As a team, we made the decision to disable info logs and only record error and warnings. We updated the logging service settings, and just like that, we saw that the page no longer stalled. We continued to work with the merchant and monitor the site for a week, and the merchant no longer reported crashes from their shoppers. On top of this, we also reduced our bill with Bugsnag. Overall this was a collaborative effort both with the merchant and the engineering team. Once this was completed, I led a retro on this issue where we discussed the impact of third-party services on application performance.
+
+
+
+
+
+

@@ -1,0 +1,16 @@
+---
+title: Question 4
+description: When would you choose to use Edge Functions, Serverless Functions, or Edge Middleware with Vercel?
+date: "2024-03-21"
+---
+## Edge Functions
+Edge functions are a cost effective alternative to serverless functions. They run on the V8 engine, are globally distributed and the pricing is based on the compute time. It is important to note that only a subset of the Node.js APIs are available.
+- Use Case: Habdle feature flags or A/B testing at the edge.
+
+## Serverless Functions
+Serverless functions should be used when you are handling computationally extensive workloads. This also offers you full access to the Node.js runtime, though it will also be slower 
+- Use Case: Data processing, image manipulation, or other computationally expensive tasks.
+
+## Edge Middleware
+Edge Middleware is code that executes before a request is processed on a site. Because of this, the middleware allows you to effectively provide personalization to static content. 
+- Use Case: Using Edge Middleware to redirect users to a specific page based on their location.
